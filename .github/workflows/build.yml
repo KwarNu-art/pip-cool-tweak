@@ -9,23 +9,65 @@ on:
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout Pip
         uses: actions/checkout@v4
 
-      - name: Setup Theos
-        uses: Randomblock1/theos-action@v1
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          brew install make ldid xz
+          echo "$(brew --prefix make)/libexec/gnubin" >> "$GITHUB_PATH"
+
+      - name: Cache Theos + SDKs
+        id: cache
+        uses: actions/cache@v4
         with:
-          theos-dir: theos
-          theos-src: https://github.com/theos/theos
-          theos-sdks: https://github.com/theos/sdks
+          path: ${{ github.workspace }}/theos
+          key: theos-sdk-v5-${{ runner.os }}
+
+      - name: Install Theos + SDKs
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          export THEOS="${GITHUB_WORKSPACE}/theos"
+
+          rm -rf "$THEOS"
+          git clone --depth=1 --recursive https://github.com/theos/theos.git "$THEOS"
+          git -C "$THEOS" submodule update --init --recursive || true
+
+          # FIX: submodule placeholder is not a real directory
+          rm -rf "$THEOS/sdks"
+          mkdir -p "$THEOS/sdks"
+
+          TMP=$(mktemp -d)
+          curl -L --retry 3 -o "$TMP/sdks.zip" \
+            "https://github.com/theos/sdks/archive/refs/heads/master.zip"
+          unzip -q "$TMP/sdks.zip" -d "$TMP"
+
+          if ls "$TMP"/sdks-master/*.sdk >/dev/null 2>&1; then
+            cp -R "$TMP"/sdks-master/*.sdk "$THEOS/sdks/"
+          else
+            find "$TMP" -type d -name "*.sdk" -maxdepth 3 -exec cp -R {} "$THEOS/sdks/" \;
+          fi
+
+          if ! ls "$THEOS/sdks"/*.sdk >/dev/null 2>&1; then
+            "$THEOS/bin/install-sdk" latest
+          fi
+
+          ls -la "$THEOS/sdks"
+          test -n "$(ls -A "$THEOS/sdks"/*.sdk 2>/dev/null || true)" \
+            || { echo "::error::No *.sdk found"; exit 1; }
+          rm -rf "$TMP"
 
       - name: Build package
         run: |
           set -euo pipefail
-          export THEOS="${THEOS:-$GITHUB_WORKSPACE/theos}"
-          ls -la "$THEOS/sdks" || true
+          export THEOS="${GITHUB_WORKSPACE}/theos"
+          ls -la "$THEOS/sdks"
           make clean package FINALPACKAGE=1
 
       - name: Upload .deb
