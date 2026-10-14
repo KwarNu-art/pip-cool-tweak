@@ -1,0 +1,10 @@
+Package: com.pip.cool
+Name: Pip
+Depends: mobilesubstrate (>= 0.9.5000), firmware (>= 12.0)
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Tiny cool companion for older iPhones. Caps FPS, lowers render scale, shows a soft HUD (CPU / thermal / FPS). Made with care for iPhone 7 Plus.
+Maintainer: Pip Team
+Author: Pip Team
+Section: Tweaks
+Icon: icon.png

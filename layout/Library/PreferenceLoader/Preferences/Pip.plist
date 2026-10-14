@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>entry</key>
+	<dict>
+		<key>cell</key>
+		<string>PSLinkCell</string>
+		<key>icon</key>
+		<string>icon.png</string>
+		<key>label</key>
+		<string>Pip</string>
+	</dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Pip — tiny cool helper</string>
+			<key>footerText</key>
+			<string>iPhone 7 Plus max refresh is 60 Hz. Pip cannot remove heat 100%. It only reduces work (FPS, scale, blur) so the phone stays cooler longer.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>enabled</string>
+			<key>label</key>
+			<string>Enable Pip</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>showHUD</string>
+			<key>label</key>
+			<string>Show floating pill</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>FPS cap</string>
+			<key>footerText</key>
+			<string>Lower FPS = less heat and battery use. Games may still push hard; Pip helps UI and many apps most.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSegmentCell</string>
+			<key>default</key>
+			<integer>30</integer>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>fpsCap</string>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>15</integer>
+				<integer>20</integer>
+				<integer>30</integer>
+				<integer>60</integer>
+			</array>
+			<key>validTitles</key>
+			<array>
+				<string>Off</string>
+				<string>15</string>
+				<string>20</string>
+				<string>30</string>
+				<string>60</string>
+			</array>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Graphics size</string>
+			<key>footerText</key>
+			<string>Smaller = fewer pixels to draw = cooler GPU. Extreme settings can make text a bit soft.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSegmentCell</string>
+			<key>default</key>
+			<integer>1</integer>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>graphicsLevel</string>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+				<integer>2</integer>
+				<integer>3</integer>
+			</array>
+			<key>validTitles</key>
+			<array>
+				<string>Normal</string>
+				<string>Small</string>
+				<string>Smaller</string>
+				<string>Smallest</string>
+			</array>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Extra cooling</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>reduceBlur</string>
+			<key>label</key>
+			<string>Reduce blur effects</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.pip.cool</string>
+			<key>key</key>
+			<string>reduceAnimations</string>
+			<key>label</key>
+			<string>Reduce UI animations</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Respring after big changes. Built for your iPhone 7 Plus with love — not magic.</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Pip</string>
+</dict>
+</plist>
