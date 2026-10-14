@@ -1,0 +1,41 @@
+name: Build Pip (manual Theos)
+
+# Alternate workflow if theos-action ever breaks. Enable via Actions tab.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tools
+        run: |
+          brew install make ldid xz || true
+          echo "$(brew --prefix make)/libexec/gnubin" >> "$GITHUB_PATH" || true
+
+      - name: Theos + SDKs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          export THEOS="$GITHUB_WORKSPACE/theos"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+          git clone --depth=1 --recursive https://github.com/theos/theos.git "$THEOS"
+          mkdir -p "$THEOS/sdks"
+          # install-sdk REQUIRES an argument (this was the bug in the first workflow)
+          "$THEOS/bin/install-sdk" latest
+          ls -la "$THEOS/sdks"
+
+      - name: Build
+        run: |
+          export THEOS="$GITHUB_WORKSPACE/theos"
+          make clean package FINALPACKAGE=1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Pip-deb-manual
+          path: packages/*.deb
+          if-no-files-found: error

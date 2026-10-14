@@ -1,0 +1,50 @@
+name: Build Pip (Theos)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Pip
+        uses: actions/checkout@v4
+
+      - name: Setup Theos
+        uses: Randomblock1/theos-action@v1
+        with:
+          theos-dir: theos
+          theos-src: https://github.com/theos/theos
+          theos-sdks: https://github.com/theos/sdks
+
+      - name: Build package
+        run: |
+          set -euo pipefail
+          echo "THEOS=${THEOS:-$GITHUB_WORKSPACE/theos}"
+          export THEOS="${THEOS:-$GITHUB_WORKSPACE/theos}"
+          ls -la "$THEOS/sdks" || true
+          make clean package FINALPACKAGE=1
+
+      - name: Upload .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pip-deb
+          path: packages/*.deb
+          if-no-files-found: error
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Pip build"
+            echo "- Runner: macos-15 + Randomblock1/theos-action"
+            echo "- Target: arm64 (iPhone 7 Plus)"
+            echo ""
+            echo '```'
+            ls -la packages 2>/dev/null || echo "(no packages/)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,4 +1,5 @@
-TARGET := iphone:clang:15.5:12.0
+# Use latest installed iPhoneOS SDK on the machine/CI runner
+TARGET := iphone:clang:latest:12.0
 ARCHS := arm64
 INSTALL_TARGET_PROCESSES := SpringBoard
 
