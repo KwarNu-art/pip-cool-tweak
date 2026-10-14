@@ -1,0 +1,47 @@
+name: Build Pip (Theos)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Theos
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/theos
+          key: theos-ios-15-${{ runner.os }}
+
+      - name: Install Theos
+        run: |
+          if [ ! -d "$GITHUB_WORKSPACE/theos" ]; then
+            git clone --depth=1 https://github.com/theos/theos.git "$GITHUB_WORKSPACE/theos"
+            (cd "$GITHUB_WORKSPACE/theos" && ./bin/install-sdk)
+          fi
+          echo "THEOS=$GITHUB_WORKSPACE/theos" >> $GITHUB_ENV
+
+      - name: Build package
+        run: |
+          export THEOS="$GITHUB_WORKSPACE/theos"
+          make package FINALPACKAGE=1
+
+      - name: Upload .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pip-deb
+          path: packages/*.deb
+          if-no-files-found: warn
+
+      - name: Summary
+        run: |
+          echo "### Pip build" >> $GITHUB_STEP_SUMMARY
+          echo "- Target: iPhone arm64 (iPhone 7 Plus class)" >> $GITHUB_STEP_SUMMARY
+          echo "- Max honest FPS: 60 Hz (hardware limit)" >> $GITHUB_STEP_SUMMARY
+          ls -la packages 2>/dev/null || echo "No packages/ yet — check Theos SDK setup on runner."
